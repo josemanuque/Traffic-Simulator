@@ -12,7 +12,7 @@ public class Node {
     private float y;
     private ArrayList<Edge> edges;
 
-    public void Node(float alfa){
+    public Node(float alfa){
         this.isFilled = false;
         this.alfa = alfa;
         this.edges = new ArrayList<Edge>();

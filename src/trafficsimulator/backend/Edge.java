@@ -7,7 +7,7 @@ public class Edge {
     private Node origin;
     private Node destiny;
 
-    public void Edge(int distance, Node origin, Node destiny){
+    public Edge(int distance, Node origin, Node destiny){
         this.distance = distance;
         this.origin = origin;
         this.destiny = destiny;

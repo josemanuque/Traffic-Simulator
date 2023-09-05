@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Graph {
     ArrayList<Node> nodes;
 
-    public void Graph(){
+    public Graph(){
         this.nodes = new ArrayList<Node>();
     }
 
