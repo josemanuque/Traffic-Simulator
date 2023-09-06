@@ -17,7 +17,8 @@ import trafficsimulator.backend.Node;
 public class GraphPanel extends JPanel {
     private List<NodeComponent> nodesUI;
     private List<EdgeComponent> edgesUI;
-    
+
+    private NodeComponent selectedNodeUI;
     public GraphPanel(){
         nodesUI = new ArrayList<NodeComponent>();
         edgesUI = new ArrayList<EdgeComponent>();
@@ -42,14 +43,20 @@ public class GraphPanel extends JPanel {
     public int getNodesUISize(){
         return nodesUI.size();
     }
-    
+
+    public void setSelectedNodeUI(NodeComponent selectedNodeUI) {
+        this.selectedNodeUI = selectedNodeUI;
+    }
+
     public NodeComponent isNodeSelected(int x, int y){
         for(NodeComponent nodeUI : nodesUI){
             if(nodeUI.contains(x, y)){
-                //nodeUI.setColor(Color.BLUE);
-                return nodeUI;
+                nodeUI.setColor(Color.BLUE);
+                selectedNodeUI = nodeUI;
+                return this.selectedNodeUI;
             }
         }
+        selectedNodeUI = null;
         return null;
     }
     
@@ -58,6 +65,8 @@ public class GraphPanel extends JPanel {
         super.paintComponent(g);
         
         for(NodeComponent nodeUI : nodesUI) {
+            if (selectedNodeUI != nodeUI)
+                nodeUI.setColor(Color.BLACK);
             nodeUI.paint(g);
         }
         

@@ -76,7 +76,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
                     y1 = e.getY();
                     panel.addNode(x1, y1);
                     repaint();
-                    float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
+                    //float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
                     if(panel.getNodesUISize() >= 2){
                         buttonRadioEdges.setEnabled(true);
                     }
@@ -106,17 +106,18 @@ public class SimulatorWindow extends javax.swing.JFrame {
                             int x2 = (int) (nodeUI2.getX() - nodeUI2.getRadius() * Math.cos(angle));
                             int y2 = (int) (nodeUI2.getY() - nodeUI2.getRadius() * Math.sin(angle));
                             panel.addEdge(x1, y1, x2, y2);
+                            panel.setSelectedNodeUI(null);
                             repaint();
-                            x1 = -1;
-                            y1 = -1;
-                            x2 = -1;
-                            y2 = -1;
+
                             nodeUI1 = null;
                             nodeUI2 = null;
                         }
                         //float distance = Float.parseFloat(JOptionPane.showInputDialog("Enter a distance value", "4"));
                         //repaint();
-                        
+                        x1 = -1;
+                        y1 = -1;
+                        x2 = -1;
+                        y2 = -1;
                      }
                 }
             }
