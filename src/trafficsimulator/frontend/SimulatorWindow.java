@@ -21,10 +21,8 @@ import javax.swing.JOptionPane;
  * @author josemanuque
  */
 public class SimulatorWindow extends javax.swing.JFrame {
-    private int x1 = -1;
-    private int y1 = -1;
-    private int x2 = -1;
-    private int y2 = -1;
+    private int x = -1;
+    private int y = -1;
     private NodeComponent nodeUI1;
     private NodeComponent nodeUI2;
     private int mode = 0;
@@ -41,10 +39,7 @@ public class SimulatorWindow extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Changes mode to 1 when Edges button is pressed.
                 mode = 1;
-                x1 = -1; // Cleans coordinate variables for later use (Maybe not needed)
-                y1 = -1;
-                x2 = -1;
-                y2 = -1;
+
             }
         });
         buttonRadioNodes.addActionListener(new ActionListener() {
@@ -71,54 +66,45 @@ public class SimulatorWindow extends javax.swing.JFrame {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(mode == 0){
-                    x1 = e.getX();
-                    y1 = e.getY();
-                    panel.addNode(x1, y1);
-                    repaint();
-                    //float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
-                    if(panel.getNodesUISize() >= 2){
-                        buttonRadioEdges.setEnabled(true);
+                x = e.getX();
+                y = e.getY();
+                switch (mode) {
+                    case 0 ->{
+                        panel.addNode(x, y);
+                        repaint();
+                        float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
+                        if(panel.getNodesUISize() >= 2){
+                            buttonRadioEdges.setEnabled(true);
+                        }
                     }
-                } else {
-                    if (x1 == -1 && y1 == -1) {
-                        // Si es la primera vez que se hace clic en modo 1, establece las coordenadas iniciales
-                        x1 = e.getX();
-                        y1 = e.getY();
-                        nodeUI1 = panel.isNodeSelected(x1, y1);
-                        if(nodeUI1 != null){
-                            repaint();
+                    case 1 -> {
+                        if (panel.getSelectedNodeUI() == null) {
+                            // Si es la primera vez que se hace clic en modo 1, establece las coordenadas iniciales
+                            nodeUI1 = panel.isNodeSelected(x, y);
+                            if(nodeUI1 != null){
+                                repaint();
+                            }
                         } else {
-                            x1 = -1;
-                            y1 = -1;
+                            nodeUI2 = panel.isNodeSelected(x, y);
+                            if(nodeUI2 != null){
+                                double angle = Math.atan2(nodeUI2.getY() - nodeUI1.getY(), nodeUI2.getX() - nodeUI1.getX());
+
+                                int x1 = (int) (nodeUI1.getX() + nodeUI1.getRadius() * Math.cos(angle));
+                                int y1 = (int) (nodeUI1.getY() + nodeUI1.getRadius() * Math.sin(angle));
+
+                                int x2 = (int) (nodeUI2.getX() - nodeUI2.getRadius() * Math.cos(angle));
+                                int y2 = (int) (nodeUI2.getY() - nodeUI2.getRadius() * Math.sin(angle));
+                                panel.addEdge(x1, y1, x2, y2);
+                                panel.setSelectedNodeUI(null);
+                                repaint();
+                                float distance = Float.parseFloat(JOptionPane.showInputDialog("Enter a distance value", "4"));
+                                nodeUI1 = null;
+                                nodeUI2 = null;
+                            }
+                            //repaint();
+
                         }
-                    } else {
-                        x2 = e.getX();
-                        y2 = e.getY();
-                        nodeUI2 = panel.isNodeSelected(x2, y2);
-                        if(nodeUI2 != null){
-                            
-                            double angle = Math.atan2(nodeUI2.getY() - nodeUI1.getY(), nodeUI2.getX() - nodeUI1.getX());
-
-                            int x1 = (int) (nodeUI1.getX() + nodeUI1.getRadius() * Math.cos(angle));
-                            int y1 = (int) (nodeUI1.getY() + nodeUI1.getRadius() * Math.sin(angle));
-
-                            int x2 = (int) (nodeUI2.getX() - nodeUI2.getRadius() * Math.cos(angle));
-                            int y2 = (int) (nodeUI2.getY() - nodeUI2.getRadius() * Math.sin(angle));
-                            panel.addEdge(x1, y1, x2, y2);
-                            panel.setSelectedNodeUI(null);
-                            repaint();
-
-                            nodeUI1 = null;
-                            nodeUI2 = null;
-                        }
-                        //float distance = Float.parseFloat(JOptionPane.showInputDialog("Enter a distance value", "4"));
-                        //repaint();
-                        x1 = -1;
-                        y1 = -1;
-                        x2 = -1;
-                        y2 = -1;
-                     }
+                    }
                 }
             }
         });

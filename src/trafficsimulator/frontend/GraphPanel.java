@@ -44,6 +44,10 @@ public class GraphPanel extends JPanel {
         return nodesUI.size();
     }
 
+    public NodeComponent getSelectedNodeUI() {
+        return selectedNodeUI;
+    }
+
     public void setSelectedNodeUI(NodeComponent selectedNodeUI) {
         this.selectedNodeUI = selectedNodeUI;
     }
