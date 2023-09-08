@@ -3,17 +3,18 @@ package trafficsimulator.backend;
 import java.util.ArrayList;
 
 public class Edge {
-    private int distance;
+    private float distance;
     private Node origin;
     private Node destiny;
 
-    public Edge(int distance, Node origin, Node destiny){
+    public Edge(float distance, Node origin, Node destiny){
         this.distance = distance;
         this.origin = origin;
         this.destiny = destiny;
+        System.out.println("Edge created");
     }
 
-    public int getDistance() {
+    public float getDistance() {
         return distance;
     }
 

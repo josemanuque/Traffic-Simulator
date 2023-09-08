@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 /**
  *
@@ -33,81 +33,23 @@ public class SimulatorWindow extends javax.swing.JFrame {
         setTitle("Traffic Simulation");
         
         initComponents();
-        
-        buttonRadioEdges.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Changes mode to 1 when Edges button is pressed.
-                mode = 1;
 
-            }
-        });
-        buttonRadioNodes.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Changes mode to 0 when Nodes button is pressed
-                mode = 0;
-            }
-        });
-        
-        
-        /* 
-            Método que escucha clicks de mouse y obtiene su posición x, y
-        
-        Cosas por arreglar: 
-            Se debería manejar en una clase controller aparte. Para pruebas se maneja acá
-            Una vez esté en controller debería también crear los objetos de la parte lógica.
-            Creo que ya no es necesario manejar x2, y2 porque ya hay algo que detecta si un nodo fue seleccionado.
-            
-        Problemas:
-            Da un exception cuando se selecciona node, luego se vuelve a edge y se selecciona un nodo
-        ¨   
-        */
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                x = e.getX();
-                y = e.getY();
-                switch (mode) {
-                    case 0 ->{
-                        panel.addNode(x, y);
-                        repaint();
-                        float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
-                        if(panel.getNodesUISize() >= 2){
-                            buttonRadioEdges.setEnabled(true);
-                        }
-                    }
-                    case 1 -> {
-                        if (panel.getSelectedNodeUI() == null) {
-                            // Si es la primera vez que se hace clic en modo 1, establece las coordenadas iniciales
-                            nodeUI1 = panel.isNodeSelected(x, y);
-                            if(nodeUI1 != null){
-                                repaint();
-                            }
-                        } else {
-                            nodeUI2 = panel.isNodeSelected(x, y);
-                            if(nodeUI2 != null){
-                                double angle = Math.atan2(nodeUI2.getY() - nodeUI1.getY(), nodeUI2.getX() - nodeUI1.getX());
+    }
 
-                                int x1 = (int) (nodeUI1.getX() + nodeUI1.getRadius() * Math.cos(angle));
-                                int y1 = (int) (nodeUI1.getY() + nodeUI1.getRadius() * Math.sin(angle));
+    public JRadioButton getButtonRadioEdges() {
+        return buttonRadioEdges;
+    }
 
-                                int x2 = (int) (nodeUI2.getX() - nodeUI2.getRadius() * Math.cos(angle));
-                                int y2 = (int) (nodeUI2.getY() - nodeUI2.getRadius() * Math.sin(angle));
-                                panel.addEdge(x1, y1, x2, y2);
-                                panel.setSelectedNodeUI(null);
-                                repaint();
-                                float distance = Float.parseFloat(JOptionPane.showInputDialog("Enter a distance value", "4"));
-                                nodeUI1 = null;
-                                nodeUI2 = null;
-                            }
-                            //repaint();
+    public JRadioButton getButtonRadioNodes() {
+        return buttonRadioNodes;
+    }
 
-                        }
-                    }
-                }
-            }
-        });
+    public GraphPanel getPanel() {
+        return panel;
+    }
+
+    public void setPanel(GraphPanel panel) {
+        this.panel = panel;
     }
 
     @Override
