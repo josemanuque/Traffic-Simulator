@@ -19,6 +19,10 @@ public class Node implements Comparable<Node> {
         this.alfa = alfa;
         this.edges = new ArrayList<Edge>();
     }
+    public Node() {
+        this.isFilled = false;
+        this.edges = new ArrayList<Edge>();
+    }
 
     public boolean isFilled() {
         return isFilled;

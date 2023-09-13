@@ -1,17 +1,15 @@
 package trafficsimulator.backend;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Graph {
 
-    ArrayList<Node> nodes;
+    private ArrayList<Node> nodes;
+    private ArrayList<Vehicle> vehicles;
 
     public Graph() {
         this.nodes = new ArrayList<Node>();
+        this.vehicles = new ArrayList<Vehicle>();
     }
 
     public ArrayList<Node> getNodes() {
@@ -20,6 +18,29 @@ public class Graph {
 
     public void addNode(Node node) {
         this.nodes.add(node);
+    }
+
+    public void createCar() {
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(nodes.size());
+
+        if (!nodes.get(randomIndex).isFilled()){
+            Node startNode = nodes.get(randomIndex);
+
+            Random rand2 = new Random();
+            int randomIndex2 = rand2.nextInt(nodes.size());
+
+            while (randomIndex2 == randomIndex){
+                randomIndex2 = rand2.nextInt(nodes.size());
+            }
+            Node finishNode = nodes.get(randomIndex2);
+
+            Vehicle vehicle = new Vehicle(this, startNode, finishNode);
+            vehicles.add(vehicle);
+            Thread vehicleThread = new Thread(vehicle);
+            vehicleThread.start();
+        }
+
     }
 
     public ArrayList<Node> dijkstra(Node originNode, Node destinyNode) {

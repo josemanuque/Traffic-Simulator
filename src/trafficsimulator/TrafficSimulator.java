@@ -5,6 +5,8 @@
 package trafficsimulator;
 
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import trafficsimulator.backend.Edge;
 import trafficsimulator.backend.Graph;
 import trafficsimulator.backend.Node;
@@ -55,6 +57,24 @@ public class TrafficSimulator {
             }
         } else {
             System.out.println("No se encontró un camino de A a E.");
+        }
+
+        //Vehicles testing
+        Scanner scanner = new Scanner(System.in);
+        int alfa = 5000;
+        while (true) {
+            System.out.println("Presiona Enter para crear un carro...");
+            scanner.nextLine();
+
+
+            graph.createCar();
+            System.out.println("Se ha creado un nuevo carro.");
+
+            try {
+                Thread.sleep(alfa);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         
 //        for (Node node : graph.getNodes()) {
