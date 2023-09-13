@@ -3,8 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/frontend/GraphPanel.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/backend/Node.java</file>
             <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/TrafficSimulator.java</file>
-            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/GUI.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/frontend/EdgeComponent.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/frontend/NodeComponent.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/controllers/SimulatorController.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/frontend/SimulatorWindow.java</file>
             <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/backend/Edge.java</file>
         </group>
     </open-files>

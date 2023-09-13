@@ -1,5 +1,6 @@
 package trafficsimulator.controllers;
 
+import java.awt.Color;
 import trafficsimulator.backend.Graph;
 import trafficsimulator.backend.Node;
 import trafficsimulator.frontend.GraphPanel;
@@ -77,7 +78,7 @@ public class SimulatorController {
                             }
                         } else {
                             nodeUI2 = panel.isNodeSelected(x, y);
-                            if(nodeUI2 != null){
+                            if(nodeUI2 != null && nodeUI2 != nodeUI1){
                                 double angle = Math.atan2(nodeUI2.getY() - nodeUI1.getY(), nodeUI2.getX() - nodeUI1.getX());
 
                                 int x1 = (int) (nodeUI1.getX() + nodeUI1.getRadius() * Math.cos(angle));
@@ -96,6 +97,15 @@ public class SimulatorController {
                                 }
                                 nodeUI1 = null;
                                 nodeUI2 = null;
+                            }
+                            else{
+                                if (nodeUI1 != null){
+                                    nodeUI1.setColor(Color.BLACK);
+                                }
+                                nodeUI1 = null;
+                                nodeUI2 = null;
+                                panel.setSelectedNodeUI(null);
+                                simulatorUI.repaint();
                             }
                             //repaint();
 
