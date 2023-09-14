@@ -89,7 +89,7 @@ public class SimulatorController {
                                 panel.addEdge(x1, y1, x2, y2);
                                 panel.setSelectedNodeUI(null);
                                 simulatorUI.repaint();
-                                float distance = Float.parseFloat(JOptionPane.showInputDialog("Enter a distance value", "4"));
+                                int distance = Integer.parseInt(JOptionPane.showInputDialog("Enter a distance value", "4"));
                                 Node node1 = graph.getNode(nodeUI1.getX(), nodeUI1.getY());
                                 Node node2 = graph.getNode(nodeUI2.getX(), nodeUI2.getY());
                                 if (node1 != null){

@@ -82,6 +82,9 @@ public class Graph {
             }
         }
         
+        return null;
+    }
+    
     public Node getNode(int x, int y){
         for (Node node : nodes){
             if (node.getX() == x && node.getY() == y)

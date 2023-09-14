@@ -35,10 +35,10 @@ public class TrafficSimulator implements WelcomeScreenListener{
         screen.setVisible(true);
 
 // PRUEBA DIJKSTRA
-        Node nodeA = new Node(1);
-        Node nodeB = new Node(2);
-        Node nodeC = new Node(3);
-        Node nodeD = new Node(4);
+        Node nodeA = new Node(1, 60, 20);
+        Node nodeB = new Node(2, 80, 90);
+        Node nodeC = new Node(3, 49, 120);
+        Node nodeD = new Node(4, 39, 10);
 
         // Crear aristas bidireccionales
         nodeA.addEdge(new Edge(2, nodeA, nodeB));
