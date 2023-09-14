@@ -10,14 +10,19 @@ import java.util.Scanner;
 import trafficsimulator.backend.Edge;
 import trafficsimulator.backend.Graph;
 import trafficsimulator.backend.Node;
+import trafficsimulator.controllers.SimulatorController;
 import trafficsimulator.frontend.*;
 
 /**
  *
  * @author josemanuque
  */
-public class TrafficSimulator {
-
+public class TrafficSimulator implements WelcomeScreenListener{
+    private SimulatorController controller;
+    public void onNewSimulationWindow(SimulatorWindow simulatorUI){
+        controller = new SimulatorController(simulatorUI);
+        System.out.println("Se crea nuevo controller");
+    }
     /**
      * @param args the command line arguments
      */
@@ -25,6 +30,8 @@ public class TrafficSimulator {
         // TODO code application logic here
         System.out.println("Hello World");
         WelcomeScreen screen = new WelcomeScreen();
+        TrafficSimulator trafficSimulator = new TrafficSimulator();
+        screen.setWelcomeScreenListener(trafficSimulator);
         screen.setVisible(true);
 
 // PRUEBA DIJKSTRA

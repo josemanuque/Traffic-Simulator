@@ -14,17 +14,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 /**
  *
  * @author josemanuque
  */
 public class SimulatorWindow extends javax.swing.JFrame {
-    private int x1 = -1;
-    private int y1 = -1;
-    private int x2 = -1;
-    private int y2 = -1;
+    private int x = -1;
+    private int y = -1;
     private NodeComponent nodeUI1;
     private NodeComponent nodeUI2;
     private int mode = 0;
@@ -35,93 +33,23 @@ public class SimulatorWindow extends javax.swing.JFrame {
         setTitle("Traffic Simulation");
         
         initComponents();
-        
-        buttonRadioEdges.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Changes mode to 1 when Edges button is pressed.
-                mode = 1;
-                x1 = -1; // Cleans coordinate variables for later use (Maybe not needed)
-                y1 = -1;
-                x2 = -1;
-                y2 = -1;
-            }
-        });
-        buttonRadioNodes.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Changes mode to 0 when Nodes button is pressed
-                mode = 0;
-            }
-        });
-        
-        
-        /* 
-            Método que escucha clicks de mouse y obtiene su posición x, y
-        
-        Cosas por arreglar: 
-            Se debería manejar en una clase controller aparte. Para pruebas se maneja acá
-            Una vez esté en controller debería también crear los objetos de la parte lógica.
-            Creo que ya no es necesario manejar x2, y2 porque ya hay algo que detecta si un nodo fue seleccionado.
-            
-        Problemas:
-            Da un exception cuando se selecciona node, luego se vuelve a edge y se selecciona un nodo
-        ¨   
-        */
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(mode == 0){
-                    x1 = e.getX();
-                    y1 = e.getY();
-                    panel.addNode(x1, y1);
-                    repaint();
-                    //float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
-                    if(panel.getNodesUISize() >= 2){
-                        buttonRadioEdges.setEnabled(true);
-                    }
-                } else {
-                    if (x1 == -1 && y1 == -1) {
-                        // Si es la primera vez que se hace clic en modo 1, establece las coordenadas iniciales
-                        x1 = e.getX();
-                        y1 = e.getY();
-                        nodeUI1 = panel.isNodeSelected(x1, y1);
-                        if(nodeUI1 != null){
-                            repaint();
-                        } else {
-                            x1 = -1;
-                            y1 = -1;
-                        }
-                    } else {
-                        x2 = e.getX();
-                        y2 = e.getY();
-                        nodeUI2 = panel.isNodeSelected(x2, y2);
-                        if(nodeUI2 != null){
-                            
-                            double angle = Math.atan2(nodeUI2.getY() - nodeUI1.getY(), nodeUI2.getX() - nodeUI1.getX());
 
-                            int x1 = (int) (nodeUI1.getX() + nodeUI1.getRadius() * Math.cos(angle));
-                            int y1 = (int) (nodeUI1.getY() + nodeUI1.getRadius() * Math.sin(angle));
+    }
 
-                            int x2 = (int) (nodeUI2.getX() - nodeUI2.getRadius() * Math.cos(angle));
-                            int y2 = (int) (nodeUI2.getY() - nodeUI2.getRadius() * Math.sin(angle));
-                            panel.addEdge(x1, y1, x2, y2);
-                            panel.setSelectedNodeUI(null);
-                            repaint();
+    public JRadioButton getButtonRadioEdges() {
+        return buttonRadioEdges;
+    }
 
-                            nodeUI1 = null;
-                            nodeUI2 = null;
-                        }
-                        //float distance = Float.parseFloat(JOptionPane.showInputDialog("Enter a distance value", "4"));
-                        //repaint();
-                        x1 = -1;
-                        y1 = -1;
-                        x2 = -1;
-                        y2 = -1;
-                     }
-                }
-            }
-        });
+    public JRadioButton getButtonRadioNodes() {
+        return buttonRadioNodes;
+    }
+
+    public GraphPanel getPanel() {
+        return panel;
+    }
+
+    public void setPanel(GraphPanel panel) {
+        this.panel = panel;
     }
 
     @Override
