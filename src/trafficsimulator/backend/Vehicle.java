@@ -1,30 +1,47 @@
 package trafficsimulator.backend;
 
+import java.util.ArrayList;
+
 public class Vehicle implements Runnable{
     private Node start;
     private Node finish;
     private Graph graph;
 
+    private Thread thread;
+
     public Vehicle(Graph graph, Node start, Node finish) {
         this.graph = graph;
         this.start = start;
         this.finish = finish;
+        this.thread = new Thread();
+        this.thread.start();
+    }
+
+    Thread getThread(){
+        return this.thread;
     }
 
 
     @Override
     public void run() {
-        // Implementa la lógica de movimiento del automóvil aquí
-        // Puedes utilizar un bucle while para que el automóvil se mueva continuamente
-        // dentro del grafo siguiendo las aristas disponibles
-        while (!Thread.currentThread().isInterrupted()) {
-            // Mueve el automóvil al siguiente nodo a lo largo de una arista
-            // Puedes implementar esta lógica utilizando la información de las aristas
-            // y el nodo actual del automóvil
-            // Actualiza el nodo actual del automóvil
 
-            // Agrega alguna lógica de espera (Thread.sleep) para simular el tiempo que
-            // lleva el viaje entre nodos
+        ArrayList<Node> route = this.graph.dijkstra(this.start, this.finish);
+
+        for (int i = 0; i< route.size(); i++){
+
+            try {
+                this.thread.sleep(2000);
+            } catch (InterruptedException e) {
+                // Manejo de la excepción, si es necesario
+            }
+
+            if (route.get(i).isFilled()){
+
+            }
+
         }
+        this.thread.interrupt();
+
+
     }
 }

@@ -37,8 +37,6 @@ public class Graph {
 
             Vehicle vehicle = new Vehicle(this, startNode, finishNode);
             vehicles.add(vehicle);
-            Thread vehicleThread = new Thread(vehicle);
-            vehicleThread.start();
         }
 
     }
