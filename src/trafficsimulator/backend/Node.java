@@ -1,6 +1,8 @@
 package trafficsimulator.backend;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Node implements Comparable<Node> {
 
@@ -14,17 +16,32 @@ public class Node implements Comparable<Node> {
     private int y;
     private ArrayList<Edge> edges;
 
+    private Queue<Vehicle> generalQ;
+
     public Node(float alfa, int x, int y){
         this.isFilled = false;
         this.alfa = alfa;
         this.x = x;
         this.y = y;
         this.edges = new ArrayList<Edge>();
+        this.generalQ = new LinkedList<Vehicle>();
         System.out.println("Node Created");
     }
     public Node() {
         this.isFilled = false;
         this.edges = new ArrayList<Edge>();
+    }
+
+    public Queue<Vehicle> getGeneralQ() {
+        return generalQ;
+    }
+
+    public void setGeneralQ(Queue<Vehicle> generalQ) {
+        this.generalQ = generalQ;
+    }
+
+    public void addVehicleQ(Vehicle vehicle){
+        this.generalQ.add(vehicle);
     }
 
     public boolean isFilled() {
