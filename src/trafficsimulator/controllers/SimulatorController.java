@@ -12,12 +12,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import trafficsimulator.backend.Edge;
 
 public class SimulatorController {
     private SimulatorWindow simulatorUI;
     private GraphPanel panel;
     private JRadioButton buttonRadioNodes;
     private JRadioButton buttonRadioEdges;
+    private JButton buttonStart;
     private NodeComponent nodeUI1;
     private NodeComponent nodeUI2;
     private int mode = 0;
@@ -30,9 +32,11 @@ public class SimulatorController {
         this.panel = simulatorUI.getPanel();
         this.buttonRadioNodes = simulatorUI.getButtonRadioNodes();
         this.buttonRadioEdges = simulatorUI.getButtonRadioEdges();
+        this.buttonStart = simulatorUI.getButtonStart();
         this.graph = new Graph();
         mouseListener();
         radioButtonListener();
+        buttonStartListener();
     }
 
     private void radioButtonListener(){
@@ -52,6 +56,25 @@ public class SimulatorController {
             }
         });
     }
+    
+    private void buttonStartListener(){
+        buttonStart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+//                int alfa = 5000;
+//                graph.createCar();
+//                try {
+//                    Thread.sleep(alfa);
+//                    graph.createCar();
+//                } catch (InterruptedException x) {
+//                    x.printStackTrace();
+//                }
+                graph.startSimulation();
+                System.out.println("Se continua en controller");
+            }
+        });
+    }
+    
     private void mouseListener(){
         panel.addMouseListener(new MouseAdapter() {
             @Override
@@ -93,7 +116,7 @@ public class SimulatorController {
                                 Node node1 = graph.getNode(nodeUI1.getX(), nodeUI1.getY());
                                 Node node2 = graph.getNode(nodeUI2.getX(), nodeUI2.getY());
                                 if (node1 != null){
-                                    node1.addEdge(distance, node2);
+                                    node1.addEdge(new Edge(distance, node1, node2));
                                 }
                                 nodeUI1 = null;
                                 nodeUI2 = null;
@@ -116,5 +139,5 @@ public class SimulatorController {
         });
     }
 
-
+    
 }

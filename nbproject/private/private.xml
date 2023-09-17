@@ -3,11 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Graph.java</file>
-            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Vehicle.java</file>
-            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/TrafficSimulator.java</file>
-            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Node.java</file>
-            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Edge.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/backend/Node.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/backend/ThreadTest.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/backend/Graph.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/backend/Vehicle.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/controllers/SimulatorController.java</file>
+            <file>file:/C:/Users/josemanuque/Documents/Dev/TrafficSimulator/src/trafficsimulator/frontend/SimulatorWindow.java</file>
         </group>
     </open-files>
 </project-private>

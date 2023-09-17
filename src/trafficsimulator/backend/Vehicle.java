@@ -1,5 +1,6 @@
 package trafficsimulator.backend;
 
+import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 
 public class Vehicle implements Runnable {
@@ -7,48 +8,55 @@ public class Vehicle implements Runnable {
     private Node start;
     private Node finish;
     private Graph graph;
+    private final Object lock;
 
-    private Thread thread;
 
-    public Vehicle(Graph graph, Node start, Node finish) {
+
+    public Vehicle(Graph graph, Node start, Node finish, Object lock) {
         this.graph = graph;
         this.start = start;
         this.finish = finish;
-        this.thread = new Thread();
-        this.thread.start();
+        this.lock = lock;
     }
 
-    Thread getThread() {
-        return this.thread;
-    }
 
     @Override
     public void run() {
+        System.out.println("Hilo " + Thread.currentThread().getId());
         ArrayList<Node> route = this.graph.dijkstra(this.start, this.finish);
-
-        for (int i = 0; i < route.size() - 1; i++) {
+        for (int i = 0; i< route.size(); i++){
             Node currentNode = route.get(i);
-            Node nextNode = route.get(i + 1);
-
+            Node nextNode = null;
+            if (currentNode != this.finish){
+                nextNode = route.get(i+1);
+            }
             try {
-                synchronized (currentNode) {
-                    currentNode.setFilled(true);
-                    this.thread.sleep(2000);
-                    currentNode.setFilled(false);
-                    if (!currentNode.getGeneralQ().isEmpty()) {
-                        Vehicle firstInQ = currentNode.getGeneralQ().poll();
+
+                currentNode.setFilled(true);
+                System.out.println("Current node filled");
+                sleep(2000);
+                currentNode.setFilled(false);
+                if (!currentNode.getGeneralQ().isEmpty()){
+                    System.out.println(currentNode.getGeneralQ().element());
+                    Vehicle firstInQ = currentNode.getGeneralQ().poll();
+                    if (firstInQ != null) {
                         synchronized (firstInQ) {
                             firstInQ.notify();
                         }
-                        System.out.println("Dejando pasar el siguiente carro...");
+                        System.out.println("Dejando pasar el siguiente carro notify()...");
+                    } else {
+                        System.out.println("fistInQ es null, no se llama a notify()");
                     }
                 }
+                
+
             } catch (InterruptedException e) {
                 // Manejo de la excepción, si es necesario
             }
 
-            if (nextNode.isFilled()) {
+            if (nextNode != null && nextNode.isFilled()){
                 // Encuentra la arista que conecta currentNode y el siguiente nodo en la ruta
+                System.out.println("Hilo " + Thread.currentThread().getId() + "con nodo lleno");
                 Edge currentEdge = null;
                 for (Edge edge : currentNode.getEdges()) {
                     if (edge.getDestiny() == nextNode) {
@@ -56,16 +64,14 @@ public class Vehicle implements Runnable {
                         break;
                     }
                 }
-
-                synchronized (nextNode) {
+                
+                synchronized (lock) {
                     currentEdge.getVehicleQueues().get(nextNode).add(this);
                     nextNode.addVehicleQ(this);
-                    
-                    currentEdge.printVehicleQueue();
 
                     try {
                         System.out.println("En espera");
-                        nextNode.wait();
+                        lock.wait();
                         System.out.println("Ya continue...");
                     } catch (InterruptedException e) {
                         // Manejo de la excepción, si es necesario
@@ -73,6 +79,6 @@ public class Vehicle implements Runnable {
                 }
             }
         }
-        this.thread.interrupt();
+        System.out.println("Llegue");
     }
 }

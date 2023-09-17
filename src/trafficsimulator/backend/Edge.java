@@ -1,5 +1,6 @@
 package trafficsimulator.backend;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -20,6 +21,8 @@ public class Edge {
         this.vehicleQueues = new HashMap<>();
         Queue<Vehicle> originQ = new LinkedList<>();
         Queue<Vehicle> destinyQ = new LinkedList<>();
+        
+        this.vehicleQueues = new HashMap<>();
         //System.out.println("Edge created");
         vehicleQueues.put(this.origin, originQ);
         vehicleQueues.put(this.destiny, destinyQ);

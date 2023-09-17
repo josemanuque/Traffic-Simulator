@@ -1,6 +1,9 @@
 package trafficsimulator.backend;
 
+import static java.lang.Thread.sleep;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Graph {
 
@@ -22,7 +25,8 @@ public class Graph {
 
     public void createCar() {
         Random rand = new Random();
-        int randomIndex = rand.nextInt(nodes.size());
+        Object lock = new Object();
+        int randomIndex = 0;
 
         if (!nodes.get(randomIndex).isFilled()){
             Node startNode = nodes.get(randomIndex);
@@ -35,10 +39,60 @@ public class Graph {
             }
             Node finishNode = nodes.get(randomIndex2);
 
-            Vehicle vehicle = new Vehicle(this, startNode, finishNode);
+            Vehicle vehicle = new Vehicle(this, startNode, finishNode, lock);
             vehicles.add(vehicle);
         }
 
+    }
+
+    public void startSimulation(){
+        int randomIndex = 0;
+        int nodesSize = nodes.size();
+        Object lock = new Object();
+        for (int i = 0; i < 10; i++){
+            Node startNode = nodes.get(0);
+            
+            randomIndex = new Random().nextInt(2);
+
+            System.out.println(randomIndex);
+            Node finishNode = nodes.get(2);
+            
+            Vehicle vehicle = new Vehicle(this, startNode, finishNode, lock);
+            vehicles.add(vehicle);
+        }
+        System.out.println("Se inician los threads");
+        Thread c = new Thread(() -> {
+            for (Vehicle vehicle : vehicles){
+                Thread t = new Thread(vehicle);
+                t.start();
+                try {
+                    // Agregar una pausa de 1 segundo (1000 milisegundos)
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    // Manejar la excepción si es necesario
+                    e.printStackTrace();
+                }
+            }
+        });
+        c.start();
+//        for (Vehicle vehicle : vehicles){
+//            Thread t = new Thread(vehicle);
+//            t.start();
+//            try {
+//                // Agregar una pausa de 1 segundo (1000 milisegundos)
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                // Manejar la excepción si es necesario
+//                e.printStackTrace();
+//            }
+//        }
+    }
+    
+    public void testThreads(){
+        for (int i = 0; i < 5; i++){
+            Thread t = new Thread(new ThreadTest());
+            t.start();
+        }
     }
 
     public ArrayList<Node> dijkstra(Node originNode, Node destinyNode) {
