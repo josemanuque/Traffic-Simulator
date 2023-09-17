@@ -87,13 +87,7 @@ public class Graph {
 //            }
 //        }
     }
-    
-    public void testThreads(){
-        for (int i = 0; i < 5; i++){
-            Thread t = new Thread(new ThreadTest());
-            t.start();
-        }
-    }
+
 
     public ArrayList<Node> dijkstra(Node originNode, Node destinyNode) {
         PriorityQueue<Node> noVisitedNodes = new PriorityQueue<>();

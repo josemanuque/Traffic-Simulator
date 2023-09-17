@@ -17,11 +17,13 @@ import trafficsimulator.backend.Node;
 public class GraphPanel extends JPanel {
     private List<NodeComponent> nodesUI;
     private List<EdgeComponent> edgesUI;
+    private List<VehicleComponent> vehiclesUI;
 
     private NodeComponent selectedNodeUI;
     public GraphPanel(){
         nodesUI = new ArrayList<NodeComponent>();
         edgesUI = new ArrayList<EdgeComponent>();
+        vehiclesUI = new ArrayList<VehicleComponent>();
     }
     
     public void addNode(int x, int y){
@@ -76,6 +78,10 @@ public class GraphPanel extends JPanel {
         
         for(EdgeComponent edgeUI : edgesUI){
             edgeUI.paint(g);
+        }
+        
+        for(VehicleComponent vehicleUI : vehiclesUI){
+            vehicleUI.paint(g);
         }
     }
 }
