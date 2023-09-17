@@ -1,22 +1,24 @@
 package trafficsimulator.backend;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
 public class Edge {
+
     private int distance;
     private Node origin;
     private Node destiny;
 
     private Map<Node, Queue<Vehicle>> vehicleQueues;
 
-    public Edge(int distance, Node origin, Node destiny){
+    public Edge(int distance, Node origin, Node destiny) {
         this.distance = distance;
         this.origin = origin;
-        Queue<Vehicle> originQ = new LinkedList<>();
         this.destiny = destiny;
+        this.vehicleQueues = new HashMap<>();
+        Queue<Vehicle> originQ = new LinkedList<>();
         Queue<Vehicle> destinyQ = new LinkedList<>();
         //System.out.println("Edge created");
         vehicleQueues.put(this.origin, originQ);
@@ -27,7 +29,7 @@ public class Edge {
         return distance;
     }
 
-    public Map<Node, Queue<Vehicle>> getVehicleQueues(){
+    public Map<Node, Queue<Vehicle>> getVehicleQueues() {
         return this.vehicleQueues;
     }
 
@@ -49,5 +51,12 @@ public class Edge {
 
     public void setDestiny(Node destiny) {
         this.destiny = destiny;
+    }
+
+    public void printVehicleQueue() {
+        System.out.println("Queue at Edge from Node (" + origin.getX() + ", " + origin.getY() + ") to Node (" + destiny.getX() + ", " + destiny.getY() + "):");
+        for (Vehicle vehicle : vehicleQueues.get(destiny)) {
+            System.out.println("    Vehicle: ");
+        }
     }
 }

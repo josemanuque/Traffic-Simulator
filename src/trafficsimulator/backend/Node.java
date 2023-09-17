@@ -18,7 +18,7 @@ public class Node implements Comparable<Node> {
 
     private Queue<Vehicle> generalQ;
 
-    public Node(float alfa, int x, int y){
+    public Node(float alfa, int x, int y) {
         this.isFilled = false;
         this.alfa = alfa;
         this.x = x;
@@ -27,6 +27,7 @@ public class Node implements Comparable<Node> {
         this.generalQ = new LinkedList<Vehicle>();
         System.out.println("Node Created");
     }
+
     public Node() {
         this.isFilled = false;
         this.edges = new ArrayList<Edge>();
@@ -40,7 +41,7 @@ public class Node implements Comparable<Node> {
         this.generalQ = generalQ;
     }
 
-    public void addVehicleQ(Vehicle vehicle){
+    public void addVehicleQ(Vehicle vehicle) {
         this.generalQ.add(vehicle);
     }
 
@@ -108,7 +109,7 @@ public class Node implements Comparable<Node> {
 //            System.out.println("  -> Arista: " + edge.getOrigin() + " -> " + edge.getDestiny() + " (Distancia: " + edge.getDistance() + ")");
 //        }
 //    }
-    public void addEdge(int distance, Node destinyNode){
+    public void addEdge(int distance, Node destinyNode) {
         edges.add(new Edge(distance, this, destinyNode));
     }
 }

@@ -10,6 +10,7 @@ import java.util.Scanner;
 import trafficsimulator.backend.Edge;
 import trafficsimulator.backend.Graph;
 import trafficsimulator.backend.Node;
+import trafficsimulator.backend.Vehicle;
 import trafficsimulator.controllers.SimulatorController;
 import trafficsimulator.frontend.*;
 
@@ -17,75 +18,61 @@ import trafficsimulator.frontend.*;
  *
  * @author josemanuque
  */
-public class TrafficSimulator implements WelcomeScreenListener{
+public class TrafficSimulator implements WelcomeScreenListener {
+
     private SimulatorController controller;
-    public void onNewSimulationWindow(SimulatorWindow simulatorUI){
+
+    public void onNewSimulationWindow(SimulatorWindow simulatorUI) {
         controller = new SimulatorController(simulatorUI);
         System.out.println("Se crea nuevo controller");
     }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         System.out.println("Hello World");
         WelcomeScreen screen = new WelcomeScreen();
         TrafficSimulator trafficSimulator = new TrafficSimulator();
         screen.setWelcomeScreenListener(trafficSimulator);
         screen.setVisible(true);
 
-// PRUEBA DIJKSTRA
+        Graph graph = new Graph();
+
         Node nodeA = new Node(1, 60, 20);
         Node nodeB = new Node(2, 80, 90);
         Node nodeC = new Node(3, 49, 120);
         Node nodeD = new Node(4, 39, 10);
 
-        // Crear aristas bidireccionales
-        nodeA.addEdge(new Edge(2, nodeA, nodeB));
-        nodeB.addEdge(new Edge(1, nodeB, nodeC));
-        nodeC.addEdge(new Edge(3, nodeC, nodeD));
-        nodeD.addEdge(new Edge(2, nodeD, nodeA));
-
-        // Crear grafo
-        Graph graph = new Graph();
         graph.addNode(nodeA);
         graph.addNode(nodeB);
         graph.addNode(nodeC);
         graph.addNode(nodeD);
 
-        // Ejecutar algoritmo de Dijkstra
-        ArrayList<Node> shortestPath = graph.dijkstra(nodeD, nodeA);
+        Edge edge1 = new Edge(2, nodeA, nodeB);
+        Edge edge2 = new Edge(1, nodeB, nodeC);
+        Edge edge3 = new Edge(3, nodeC, nodeD);
+        Edge edge4 = new Edge(2, nodeD, nodeA);
 
-        // Imprimir el camino más corto
-        if (shortestPath != null) {
-            System.out.println("Camino más corto de A a E:");
-            for (Node node : shortestPath) {
-                System.out.println("Nodo: " + node + " Alfa: " + node.getAlfa());
-            }
-        } else {
-            System.out.println("No se encontró un camino de A a E.");
+        nodeA.addEdge(edge1);
+        nodeB.addEdge(edge2);
+        nodeC.addEdge(edge3);
+        nodeD.addEdge(edge4);
+
+        int numVehicles = 5; // Número de vehículos que deseas crear
+
+        // Crear y ejecutar múltiples vehículos
+        for (int i = 0; i < numVehicles; i++) {
+            Node startNode = nodeA; // Nodo de inicio
+            Node finishNode = nodeC; // Nodo de destino (puedes cambiarlo si lo deseas)
+            Vehicle vehicle = new Vehicle(graph, startNode, finishNode);
+            //vehicle.getThread().setName("Vehicle " + (i + 1)); // Asigna un nombre único a cada vehículo
+            vehicle.run();
         }
-
-        //Vehicles testing
-        Scanner scanner = new Scanner(System.in);
-        int alfa = 5000;
-        while (true) {
-            System.out.println("Presiona Enter para crear un carro...");
-            scanner.nextLine();
-
-
-            graph.createCar();
-            System.out.println("Se ha creado un nuevo carro.");
-
-            try {
-                Thread.sleep(alfa);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        for (Node node : graph.getNodes()) {
+            for (Edge edge : node.getEdges()) {
+                edge.printVehicleQueue();
             }
         }
-        
-//        for (Node node : graph.getNodes()) {
-//            node.printEdges();
-//        }
     }
 }
