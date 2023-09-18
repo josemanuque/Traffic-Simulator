@@ -2,8 +2,6 @@ package trafficsimulator.backend;
 
 import static java.lang.Thread.sleep;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Graph {
 
@@ -11,8 +9,8 @@ public class Graph {
     private ArrayList<Vehicle> vehicles;
 
     public Graph() {
-        this.nodes = new ArrayList<Node>();
-        this.vehicles = new ArrayList<Vehicle>();
+        this.nodes = new ArrayList<>();
+        this.vehicles = new ArrayList<>();
     }
 
     public ArrayList<Node> getNodes() {
@@ -24,7 +22,6 @@ public class Graph {
     }
 
     public void createCar() {
-        Random rand = new Random();
         Object lock = new Object();
         int randomIndex = 0;
 
@@ -46,8 +43,7 @@ public class Graph {
     }
 
     public void startSimulation(){
-        int randomIndex = 0;
-        int nodesSize = nodes.size();
+        int randomIndex;
         Object lock = new Object();
         for (int i = 0; i < 10; i++){
             Node startNode = nodes.get(0);
@@ -75,17 +71,6 @@ public class Graph {
             }
         });
         c.start();
-//        for (Vehicle vehicle : vehicles){
-//            Thread t = new Thread(vehicle);
-//            t.start();
-//            try {
-//                // Agregar una pausa de 1 segundo (1000 milisegundos)
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                // Manejar la excepción si es necesario
-//                e.printStackTrace();
-//            }
-//        }
     }
 
 

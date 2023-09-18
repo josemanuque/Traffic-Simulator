@@ -10,8 +10,6 @@ public class Node implements Comparable<Node> {
     private double alfa; //creation of cars
     private int accumulatedDistance;
 
-    private Node prev;
-    private Node next;
     private int x;
     private int y;
     private ArrayList<Edge> edges;
@@ -23,14 +21,14 @@ public class Node implements Comparable<Node> {
         this.alfa = alfa;
         this.x = x;
         this.y = y;
-        this.edges = new ArrayList<Edge>();
-        this.generalQ = new LinkedList<Vehicle>();
+        this.edges = new ArrayList<>();
+        this.generalQ = new LinkedList<>();
         System.out.println("Node Created");
     }
 
     public Node() {
         this.isFilled = false;
-        this.edges = new ArrayList<Edge>();
+        this.edges = new ArrayList<>();
     }
 
     public Queue<Vehicle> getGeneralQ() {
@@ -103,12 +101,6 @@ public class Node implements Comparable<Node> {
         return Integer.compare(this.getAccumulatedDistance(), o.getAccumulatedDistance());
     }
 
-//    public void printEdges() {
-//        System.out.println("Aristas de Node: " + this);
-//        for (Edge edge : edges) {
-//            System.out.println("  -> Arista: " + edge.getOrigin() + " -> " + edge.getDestiny() + " (Distancia: " + edge.getDistance() + ")");
-//        }
-//    }
     public void addEdge(int distance, Node destinyNode) {
         edges.add(new Edge(distance, this, destinyNode));
     }

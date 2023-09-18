@@ -9,26 +9,28 @@ public class Vehicle implements Runnable {
     private Node finish;
     private Graph graph;
     private final Object lock;
-
-
+    private static int activeVehicle = 0;
 
     public Vehicle(Graph graph, Node start, Node finish, Object lock) {
         this.graph = graph;
         this.start = start;
         this.finish = finish;
         this.lock = lock;
+        synchronized(Vehicle.class){
+            activeVehicle++;
+        }
     }
-
 
     @Override
     public void run() {
+
         System.out.println("Hilo " + Thread.currentThread().getId());
         ArrayList<Node> route = this.graph.dijkstra(this.start, this.finish);
-        for (int i = 0; i< route.size(); i++){
+        for (int i = 0; i < route.size(); i++) {
             Node currentNode = route.get(i);
             Node nextNode = null;
-            if (currentNode != this.finish){
-                nextNode = route.get(i+1);
+            if (currentNode != this.finish) {
+                nextNode = route.get(i + 1);
             }
             try {
 
@@ -36,7 +38,7 @@ public class Vehicle implements Runnable {
                 System.out.println("Current node filled");
                 sleep(2000);
                 currentNode.setFilled(false);
-                if (!currentNode.getGeneralQ().isEmpty()){
+                if (!currentNode.getGeneralQ().isEmpty()) {
                     System.out.println(currentNode.getGeneralQ().element());
                     Vehicle firstInQ = currentNode.getGeneralQ().poll();
                     if (firstInQ != null) {
@@ -48,13 +50,12 @@ public class Vehicle implements Runnable {
                         System.out.println("fistInQ es null, no se llama a notify()");
                     }
                 }
-                
 
             } catch (InterruptedException e) {
                 // Manejo de la excepción, si es necesario
             }
 
-            if (nextNode != null && nextNode.isFilled()){
+            if (nextNode != null && nextNode.isFilled()) {
                 // Encuentra la arista que conecta currentNode y el siguiente nodo en la ruta
                 System.out.println("Hilo " + Thread.currentThread().getId() + "con nodo lleno");
                 Edge currentEdge = null;
@@ -64,7 +65,7 @@ public class Vehicle implements Runnable {
                         break;
                     }
                 }
-                
+
                 synchronized (lock) {
                     currentEdge.getVehicleQueues().get(nextNode).add(this);
                     nextNode.addVehicleQ(this);
@@ -80,5 +81,12 @@ public class Vehicle implements Runnable {
             }
         }
         System.out.println("Llegue");
+        synchronized(Vehicle.class){
+            activeVehicle--;
+        }
+    }
+    
+    public static int getActiveVehicle(){
+        return activeVehicle;
     }
 }

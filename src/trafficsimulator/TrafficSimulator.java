@@ -4,8 +4,6 @@
  */
 package trafficsimulator;
 
-import java.util.Scanner;
-
 import trafficsimulator.backend.Edge;
 import trafficsimulator.backend.Graph;
 import trafficsimulator.backend.Node;
@@ -36,17 +34,27 @@ public class TrafficSimulator implements WelcomeScreenListener {
         screen.setWelcomeScreenListener(trafficSimulator);
         screen.setVisible(true);
 
-// PRUEBA DIJKSTRA
-        
+        Graph graph = new Graph();
 
+        Node node1 = new Node(1, 0, 0);
+        Node node2 = new Node(1, 1, 1);
+        Node node3 = new Node(1, 2, 2);
 
-        
+        // Agrega aristas al grafo
+        Edge edge1 = new Edge(10, node1, node2);
+        Edge edge2 = new Edge(20, node2, node3);
 
-        //Vehicles testing
-        
-        
-//        for (Node node : graph.getNodes()) {
-//            node.printEdges();
-//        }
+        // Agrega nodos al grafo
+        graph.addNode(node1);
+        graph.addNode(node2);
+        graph.addNode(node3);
+
+        // Agrega aristas al grafo
+        node1.addEdge(edge1);
+        node2.addEdge(edge1);
+        node2.addEdge(edge2);
+        node3.addEdge(edge2);
+
+        graph.startSimulation();
     }
 }

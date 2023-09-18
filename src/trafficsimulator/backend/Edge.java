@@ -1,6 +1,5 @@
 package trafficsimulator.backend;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -23,7 +22,6 @@ public class Edge {
         Queue<Vehicle> destinyQ = new LinkedList<>();
         
         this.vehicleQueues = new HashMap<>();
-        //System.out.println("Edge created");
         vehicleQueues.put(this.origin, originQ);
         vehicleQueues.put(this.destiny, destinyQ);
     }
@@ -56,10 +54,10 @@ public class Edge {
         this.destiny = destiny;
     }
 
-    public void printVehicleQueue() {
-        System.out.println("Queue at Edge from Node (" + origin.getX() + ", " + origin.getY() + ") to Node (" + destiny.getX() + ", " + destiny.getY() + "):");
-        for (Vehicle vehicle : vehicleQueues.get(destiny)) {
-            System.out.println("    Vehicle: ");
-        }
-    }
+//    public void printVehicleQueue() {
+//        System.out.println("Queue at Edge from Node (" + origin.getX() + ", " + origin.getY() + ") to Node (" + destiny.getX() + ", " + destiny.getY() + "):");
+//        for (Vehicle vehicle : vehicleQueues.get(destiny)) {
+//            System.out.println("    Vehicle: ");
+//        }
+//    }
 }
