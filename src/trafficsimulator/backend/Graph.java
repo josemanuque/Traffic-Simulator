@@ -7,6 +7,7 @@ public class Graph {
 
     private ArrayList<Node> nodes;
     private ArrayList<Vehicle> vehicles;
+    private boolean flag = false;
 
     public Graph() {
         this.nodes = new ArrayList<>();
@@ -21,12 +22,12 @@ public class Graph {
         this.nodes.add(node);
     }
 
-    public void createCar() {
+    public Vehicle createCar(Node startNode) {
         Object lock = new Object();
         int randomIndex = 0;
 
         if (!nodes.get(randomIndex).isFilled()){
-            Node startNode = nodes.get(randomIndex);
+            //Node startNode = nodes.get(randomIndex);
 
             Random rand2 = new Random();
             int randomIndex2 = rand2.nextInt(nodes.size());
@@ -38,39 +39,34 @@ public class Graph {
 
             Vehicle vehicle = new Vehicle(this, startNode, finishNode, lock);
             vehicles.add(vehicle);
+            return vehicle;
         }
-
+        return null;
     }
 
     public void startSimulation(){
-        int randomIndex;
-        Object lock = new Object();
-        for (int i = 0; i < 10; i++){
-            Node startNode = nodes.get(0);
-            
-            randomIndex = new Random().nextInt(2);
-
-            System.out.println(randomIndex);
-            Node finishNode = nodes.get(2);
-            
-            Vehicle vehicle = new Vehicle(this, startNode, finishNode, lock);
-            vehicles.add(vehicle);
-        }
-        System.out.println("Se inician los threads");
-        Thread c = new Thread(() -> {
-            for (Vehicle vehicle : vehicles){
-                Thread t = new Thread(vehicle);
-                t.start();
-                try {
-                    // Agregar una pausa de 1 segundo (1000 milisegundos)
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    // Manejar la excepción si es necesario
-                    e.printStackTrace();
-                }
+        int randomIndex = 0;
+        Node startNode = nodes.get(randomIndex);
+        
+        this.flag = true;
+        while(flag){
+            double alfa = (startNode.getAlfa()) * 1000;
+            try{
+                sleep((int) alfa);
             }
-        });
-        c.start();
+            catch (InterruptedException e) {
+            }
+            
+            Vehicle vehicle = this.createCar(startNode);
+            if(vehicle != null){
+                vehicle.run();
+            }
+        }
+
+    }
+    
+    public void stopSimulation(){
+        this.flag = false;
     }
 
 
