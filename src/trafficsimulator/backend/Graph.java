@@ -1,5 +1,7 @@
 package trafficsimulator.backend;
 
+import trafficsimulator.controllers.SimulatorController;
+
 import static java.lang.Thread.sleep;
 import java.util.*;
 
@@ -8,6 +10,7 @@ public class Graph {
     private ArrayList<Node> nodes;
     private ArrayList<Vehicle> vehicles;
     private boolean flag = false;
+    private SimulatorController simulatorController;
 
     public Graph() {
         this.nodes = new ArrayList<>();
@@ -20,6 +23,23 @@ public class Graph {
 
     public void addNode(Node node) {
         this.nodes.add(node);
+    }
+
+    public void addVehicle(Vehicle vehicle) {
+        this.vehicles.add(vehicle);
+    }
+
+    public void addSimulatorController(SimulatorController simulatorController){
+        this.simulatorController = simulatorController;
+    }
+
+    public int getIndexOfNode(Node node){
+        for (int i = 0; i < nodes.size(); i++) {
+            if (nodes.get(i).equals(node)) {
+                return i; // Returns index of found node
+            }
+        }
+        return -1;
     }
 
     public Vehicle createCar(Node startNode) {
@@ -37,7 +57,7 @@ public class Graph {
             }
             Node finishNode = nodes.get(randomIndex2);
 
-            Vehicle vehicle = new Vehicle(this, startNode, finishNode, lock);
+            Vehicle vehicle = new Vehicle(this.simulatorController, startNode, finishNode, lock);
             vehicles.add(vehicle);
             return vehicle;
         }
@@ -55,11 +75,13 @@ public class Graph {
                 sleep((int) alfa);
             }
             catch (InterruptedException e) {
+                System.out.println("Exception: " + e);
             }
             
             Vehicle vehicle = this.createCar(startNode);
             if(vehicle != null){
-                vehicle.run();
+                Thread thread = new Thread(vehicle);
+                thread.start();
             }
         }
 

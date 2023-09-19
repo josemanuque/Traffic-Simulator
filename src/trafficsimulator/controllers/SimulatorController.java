@@ -1,8 +1,10 @@
 package trafficsimulator.controllers;
 
-import java.awt.Color;
+import java.awt.*;
+
 import trafficsimulator.backend.Graph;
 import trafficsimulator.backend.Node;
+import trafficsimulator.backend.Vehicle;
 import trafficsimulator.frontend.GraphPanel;
 import trafficsimulator.frontend.NodeComponent;
 import trafficsimulator.frontend.SimulatorWindow;
@@ -12,7 +14,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.util.List;
+import java.util.Random;
+
 import trafficsimulator.backend.Edge;
+import trafficsimulator.frontend.VehicleComponent;
+
+import static java.lang.Thread.sleep;
 
 public class SimulatorController {
     private SimulatorWindow simulatorUI;
@@ -26,6 +34,10 @@ public class SimulatorController {
     private int x, y = 0;
 
     private Graph graph;
+
+    private boolean isRunning = false;
+
+    private List<Node> nodes;
 
     public SimulatorController(SimulatorWindow simulatorUI) {
         this.simulatorUI = simulatorUI;
@@ -61,20 +73,90 @@ public class SimulatorController {
         buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                int alfa = 5000;
-//                graph.createCar();
-//                try {
-//                    Thread.sleep(alfa);
-//                    graph.createCar();
-//                } catch (InterruptedException x) {
-//                    x.printStackTrace();
-//                }
-                graph.startSimulation();
+                //singleVehicleSimulation();
+                startSimulation();
                 System.out.println("Se continua en controller");
             }
         });
     }
-    
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public Vehicle createVehicle(Node startNode) {
+        Object lock = new Object();
+
+        if (!startNode.isFilled()){
+            //Node startNode = nodes.get(randomIndex);
+            int startIndex = graph.getIndexOfNode(startNode);
+
+            int randomIndex = new Random().nextInt(nodes.size());
+
+            while (startIndex == randomIndex){
+                randomIndex = new Random().nextInt(nodes.size());
+            }
+            Node finishNode = nodes.get(randomIndex);
+
+            Vehicle vehicle = new Vehicle(this, startNode, finishNode, lock);
+            graph.addVehicle(vehicle);
+            return vehicle;
+        }
+        return null;
+    }
+
+    public void vehicleGenerator(Node startNode){
+        this.isRunning = true;
+        while(isRunning){
+            double alfa = (startNode.getAlfa()) * 1000;
+            try{
+                // Waits alpha seconds to continue generating next vehicle
+                sleep((int) alfa);
+            }
+            catch (InterruptedException e) {
+                System.out.println("Exception: " + e);
+            }
+
+            Vehicle vehicle = this.createVehicle(startNode);
+            if(vehicle != null){
+                Thread thread = new Thread(vehicle);
+                thread.start();
+            }
+        }
+    }
+    public void startSimulation(){
+        //graph.addSimulatorController(this); // Una vez se migre todo a controller se debe remover esto
+        nodes = graph.getNodes();
+
+        // For each node it will create a thread to start generating vehicles
+        for(Node node : nodes){
+            Thread t = new Thread(() -> {
+                vehicleGenerator(node);
+            });
+            t.start();
+        }
+    }
+
+    public void singleVehicleSimulation(){
+        graph.addSimulatorController(this); // Una vez se migre todo a controller se debe remover esto
+        nodes = graph.getNodes();
+        Node node = nodes.get(0);
+        Thread t = new Thread(() -> {
+            vehicleGenerator(node);
+        });
+        t.start();
+    }
+
+    public VehicleComponent getNewVehicleUI(){
+        return panel.getNewVehicleUI();
+    }
+    public void drawVehicleInPos(VehicleComponent vehicleUI, int x, int y){
+        vehicleUI.setPos(x, y);
+        simulatorUI.repaint();
+    }
+    public void moveVehicle(VehicleComponent vehicleUI, Point originPoint, Point destinyPoint){
+        vehicleUI.moveVehicle(simulatorUI, originPoint, destinyPoint);
+    }
     private void mouseListener(){
         panel.addMouseListener(new MouseAdapter() {
             @Override

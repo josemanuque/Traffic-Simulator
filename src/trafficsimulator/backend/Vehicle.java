@@ -1,6 +1,11 @@
 package trafficsimulator.backend;
 
+import trafficsimulator.controllers.SimulatorController;
+import trafficsimulator.frontend.VehicleComponent;
+
 import static java.lang.Thread.sleep;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Vehicle implements Runnable {
@@ -8,11 +13,14 @@ public class Vehicle implements Runnable {
     private Node start;
     private Node finish;
     private Graph graph;
+    private SimulatorController simulatorController;
+    private VehicleComponent vehicleUI;
     private final Object lock;
     private static int activeVehicle = 0;
 
-    public Vehicle(Graph graph, Node start, Node finish, Object lock) {
-        this.graph = graph;
+    public Vehicle(SimulatorController simulatorController, Node start, Node finish, Object lock) {
+        this.graph = simulatorController.getGraph();
+        this.simulatorController = simulatorController;
         this.start = start;
         this.finish = finish;
         this.lock = lock;
@@ -21,31 +29,66 @@ public class Vehicle implements Runnable {
         }
     }
 
+    public long getThreadID(){
+        return Thread.currentThread().getId();
+    }
+
+    // Encuentra la arista que conecta currentNode y el siguiente nodo en la ruta
+    public Edge findEdge(Node currentNode, Node nextNode) {
+        for (Edge edge : currentNode.getEdges()) {
+            if (edge.getDestiny() == nextNode) {
+                return edge;
+
+            }
+        } return null;
+    }
+
+
     @Override
     public void run() {
-
-        System.out.println("Hilo " + Thread.currentThread().getId());
+        System.out.println("Thread ID: " + this.getThreadID() + " started");
         ArrayList<Node> route = this.graph.dijkstra(this.start, this.finish);
+
+        vehicleUI = simulatorController.getNewVehicleUI();
+        simulatorController.drawVehicleInPos(vehicleUI, this.start.getX(), this.start.getY());
+
         for (int i = 0; i < route.size(); i++) {
             Node currentNode = route.get(i);
-            Node nextNode = null;
-            if (currentNode != this.finish) {
-                nextNode = route.get(i + 1);
+            if (currentNode == this.finish) {
+                break;
+            }
+            Node nextNode = route.get(i + 1);
+            simulatorController.moveVehicle(vehicleUI, new Point(currentNode.getX(), currentNode.getY()),
+                    new Point(nextNode.getX(), nextNode.getY()));
+
+            Edge currentEdge = findEdge(currentNode, nextNode);
+            if (nextNode.isFilled()){
+                synchronized (lock) {
+                    currentEdge.getVehicleQueues().get(nextNode).add(this);
+                    nextNode.addVehicleQ(this);
+                    try {
+                        System.out.println("Node filled, Thread" + this.getThreadID() + " waiting");
+                        lock.wait();
+                        System.out.println("Node empty, Thread" + this.getThreadID() + " continues");
+                    } catch (InterruptedException e) {
+                        // Manejo de la excepción, si es necesario
+                    }
+                }
             }
             try {
-
-                currentNode.setFilled(true);
-                System.out.println("Current node filled");
+                simulatorController.drawVehicleInPos(vehicleUI, nextNode.getX(), nextNode.getY());
+                nextNode.setFilled(true);
+                System.out.println("Current node filled by thread " + this.getThreadID());
                 sleep(2000);
-                currentNode.setFilled(false);
+                nextNode.setFilled(false);
+                System.out.println("Thread" + this.getThreadID() + " leaves node");
                 if (!currentNode.getGeneralQ().isEmpty()) {
-                    System.out.println(currentNode.getGeneralQ().element());
                     Vehicle firstInQ = currentNode.getGeneralQ().poll();
                     if (firstInQ != null) {
                         synchronized (firstInQ) {
                             firstInQ.notify();
                         }
-                        System.out.println("Dejando pasar el siguiente carro notify()...");
+                        System.out.println("Notifying next vehicle with thread id: " + firstInQ.getThreadID());
                     } else {
                         System.out.println("fistInQ es null, no se llama a notify()");
                     }
@@ -53,31 +96,6 @@ public class Vehicle implements Runnable {
 
             } catch (InterruptedException e) {
                 // Manejo de la excepción, si es necesario
-            }
-
-            if (nextNode != null && nextNode.isFilled()) {
-                // Encuentra la arista que conecta currentNode y el siguiente nodo en la ruta
-                System.out.println("Hilo " + Thread.currentThread().getId() + "con nodo lleno");
-                Edge currentEdge = null;
-                for (Edge edge : currentNode.getEdges()) {
-                    if (edge.getDestiny() == nextNode) {
-                        currentEdge = edge;
-                        break;
-                    }
-                }
-
-                synchronized (lock) {
-                    currentEdge.getVehicleQueues().get(nextNode).add(this);
-                    nextNode.addVehicleQ(this);
-
-                    try {
-                        System.out.println("En espera");
-                        lock.wait();
-                        System.out.println("Ya continue...");
-                    } catch (InterruptedException e) {
-                        // Manejo de la excepción, si es necesario
-                    }
-                }
             }
         }
         System.out.println("Llegue");

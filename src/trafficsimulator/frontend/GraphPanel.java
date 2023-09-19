@@ -34,6 +34,11 @@ public class GraphPanel extends JPanel {
         edgesUI.add(new EdgeComponent(x1, y1, x2, y2));
     }
 
+    public VehicleComponent getNewVehicleUI(){
+        VehicleComponent vehicleUI = new VehicleComponent(5);
+        vehiclesUI.add(vehicleUI);
+        return vehicleUI;
+    }
     public List<NodeComponent> getNodesUI() {
         return nodesUI;
     }
