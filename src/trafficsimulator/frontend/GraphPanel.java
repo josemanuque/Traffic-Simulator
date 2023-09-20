@@ -39,6 +39,10 @@ public class GraphPanel extends JPanel {
         vehiclesUI.add(vehicleUI);
         return vehicleUI;
     }
+
+    public void removeVehicleUI(VehicleComponent vehicleUI){
+        vehiclesUI.remove(vehicleUI);
+    }
     public List<NodeComponent> getNodesUI() {
         return nodesUI;
     }

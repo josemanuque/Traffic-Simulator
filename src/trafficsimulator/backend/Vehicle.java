@@ -58,37 +58,43 @@ public class Vehicle implements Runnable {
                 break;
             }
             Node nextNode = route.get(i + 1);
-            simulatorController.moveVehicle(vehicleUI, new Point(currentNode.getX(), currentNode.getY()),
-                    new Point(nextNode.getX(), nextNode.getY()));
-
             Edge currentEdge = findEdge(currentNode, nextNode);
+
+            Point[] points = currentEdge.getPointsByProximity(new Point(currentNode.getX(), currentNode.getY()));
+            simulatorController.moveVehicle(vehicleUI, points[0], points[1]);
+
+            currentEdge.getVehicleQueues().get(nextNode).add(this);
+            nextNode.addVehicleQ(this);
+
             if (nextNode.isFilled()){
-                synchronized (lock) {
-                    currentEdge.getVehicleQueues().get(nextNode).add(this);
-                    nextNode.addVehicleQ(this);
+                synchronized (this) {
+
                     try {
                         System.out.println("Node filled, Thread" + this.getThreadID() + " waiting");
-                        lock.wait();
+                        wait();
                         System.out.println("Node empty, Thread" + this.getThreadID() + " continues");
                     } catch (InterruptedException e) {
                         // Manejo de la excepción, si es necesario
                     }
                 }
             }
+            currentEdge.getVehicleQueues().get(nextNode).remove(this);
+            nextNode.removeVehicleQ(this);
+
             try {
                 simulatorController.drawVehicleInPos(vehicleUI, nextNode.getX(), nextNode.getY());
                 nextNode.setFilled(true);
                 System.out.println("Current node filled by thread " + this.getThreadID());
                 sleep(2000);
                 nextNode.setFilled(false);
-                System.out.println("Thread" + this.getThreadID() + " leaves node");
-                if (!currentNode.getGeneralQ().isEmpty()) {
-                    Vehicle firstInQ = currentNode.getGeneralQ().poll();
+                System.out.println("Thread " + this.getThreadID() + " leaves node");
+                if (!nextNode.getGeneralQ().isEmpty()) {
+                    Vehicle firstInQ = nextNode.getGeneralQ().poll();
                     if (firstInQ != null) {
                         synchronized (firstInQ) {
                             firstInQ.notify();
                         }
-                        System.out.println("Notifying next vehicle with thread id: " + firstInQ.getThreadID());
+                        System.out.println("Notifying next vehicle in queue");
                     } else {
                         System.out.println("fistInQ es null, no se llama a notify()");
                     }
@@ -98,10 +104,12 @@ public class Vehicle implements Runnable {
                 // Manejo de la excepción, si es necesario
             }
         }
-        System.out.println("Llegue");
+        simulatorController.deleteVehicleUI(vehicleUI);
+        System.out.println("Thread " + this.getThreadID() + " arrived and will disappear");
         synchronized(Vehicle.class){
             activeVehicle--;
         }
+
     }
     
     public static int getActiveVehicle(){

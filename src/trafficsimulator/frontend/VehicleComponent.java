@@ -46,10 +46,10 @@ public class VehicleComponent {
         destinyPoint = points[1];
 
         double distance = originPoint.distance(destinyPoint);
-        System.out.println("Distance: "+  distance);
+        //System.out.println("Distance: "+  distance);
         double speed = 10.0; // Establece tu velocidad deseada aquí
         double tIncrement = speed / distance; // Calcula el incremento de "t" basado en la velocidad
-        System.out.println("TIncrement: " + tIncrement);
+        //System.out.println("TIncrement: " + tIncrement);
         double t = 0;
         //Logic to move vehicle
         while (t < 1.0) {

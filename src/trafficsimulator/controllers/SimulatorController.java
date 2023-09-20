@@ -73,7 +73,7 @@ public class SimulatorController {
         buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //singleVehicleSimulation();
+                //singleNodeVehicleSimulation();
                 startSimulation();
                 System.out.println("Se continua en controller");
             }
@@ -108,10 +108,11 @@ public class SimulatorController {
     public void vehicleGenerator(Node startNode){
         this.isRunning = true;
         while(isRunning){
-            double alfa = (startNode.getAlfa()) * 1000;
+            // 1 / alfa to get seconds per vehicle
+            double beta = (1 /(startNode.getAlfa())) * 1000;
             try{
-                // Waits alpha seconds to continue generating next vehicle
-                sleep((int) alfa);
+                // Waits beta seconds to continue generating next vehicle
+                sleep((int) beta);
             }
             catch (InterruptedException e) {
                 System.out.println("Exception: " + e);
@@ -137,7 +138,7 @@ public class SimulatorController {
         }
     }
 
-    public void singleVehicleSimulation(){
+    public void singleNodeVehicleSimulation(){
         graph.addSimulatorController(this); // Una vez se migre todo a controller se debe remover esto
         nodes = graph.getNodes();
         Node node = nodes.get(0);
@@ -147,8 +148,24 @@ public class SimulatorController {
         t.start();
     }
 
+    public void singleVehicleSimulation(){
+        graph.addSimulatorController(this); // Una vez se migre todo a controller se debe remover esto
+        nodes = graph.getNodes();
+        Node node = nodes.get(0);
+        Vehicle vehicle = this.createVehicle(node);
+        if(vehicle != null){
+            Thread thread = new Thread(vehicle);
+            thread.start();
+        }
+    }
+
     public VehicleComponent getNewVehicleUI(){
         return panel.getNewVehicleUI();
+    }
+
+    public void deleteVehicleUI(VehicleComponent vehicleUI){
+        panel.removeVehicleUI(vehicleUI);
+        simulatorUI.repaint();
     }
     public void drawVehicleInPos(VehicleComponent vehicleUI, int x, int y){
         vehicleUI.setPos(x, y);
@@ -198,7 +215,7 @@ public class SimulatorController {
                                 Node node1 = graph.getNode(nodeUI1.getX(), nodeUI1.getY());
                                 Node node2 = graph.getNode(nodeUI2.getX(), nodeUI2.getY());
                                 if (node1 != null){
-                                    node1.addEdge(new Edge(distance, node1, node2));
+                                    node1.addEdge(new Edge(distance, node1, node2, new Point(x1, y1), new Point(x2, y2)));
                                 }
                                 nodeUI1 = null;
                                 nodeUI2 = null;

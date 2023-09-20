@@ -43,6 +43,10 @@ public class Node implements Comparable<Node> {
         this.generalQ.add(vehicle);
     }
 
+    public void removeVehicleQ(Vehicle vehicle) {
+        this.generalQ.remove(vehicle);
+    }
+
     public boolean isFilled() {
         return isFilled;
     }
@@ -93,7 +97,7 @@ public class Node implements Comparable<Node> {
 
     public void addEdge(Edge edge) {
         edges.add(edge);
-        edge.getDestiny().edges.add(new Edge(edge.getDistance(), edge.getDestiny(), this));
+        edge.getDestiny().edges.add(new Edge(edge.getDistance(), edge.getDestiny(), this, edge.getPoint1(), edge.getPoint2()));
     }
 
     @Override
@@ -101,7 +105,5 @@ public class Node implements Comparable<Node> {
         return Integer.compare(this.getAccumulatedDistance(), o.getAccumulatedDistance());
     }
 
-    public void addEdge(int distance, Node destinyNode) {
-        edges.add(new Edge(distance, this, destinyNode));
-    }
+
 }
