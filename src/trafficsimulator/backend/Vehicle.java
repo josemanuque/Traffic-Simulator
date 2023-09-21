@@ -19,6 +19,7 @@ public class Vehicle implements Runnable {
     private static int activeVehicle = 0;
     private double distanceTraveled;
     private long totalTime;
+    private int speed;
 
     public Vehicle(SimulatorController simulatorController, Node start, Node finish, Object lock) {
         this.graph = simulatorController.getGraph();
@@ -57,14 +58,16 @@ public class Vehicle implements Runnable {
     public void run() {
         System.out.println("Thread ID: " + this.getThreadID() + " started");
         ArrayList<Node> route = this.graph.dijkstra(this.start, this.finish);
+        int routeSize = route.size();
 
         vehicleUI = simulatorController.getNewVehicleUI();
         simulatorController.drawVehicleInPos(vehicleUI, this.start.getX(), this.start.getY());
-        
+
+        speed = 0;
         long startTime = System.currentTimeMillis();
         long stopTime = 0;
 
-        for (int i = 0; i < route.size(); i++) {
+        for (int i = 0; i < routeSize; i++) {
             Node currentNode = route.get(i);
             if (currentNode == this.finish) {
                 break;
@@ -73,8 +76,9 @@ public class Vehicle implements Runnable {
             Edge currentEdge = findEdge(currentNode, nextNode);
 
             Point[] points = currentEdge.getPointsByProximity(new Point(currentNode.getX(), currentNode.getY()));
+            speed = 10;
             simulatorController.moveVehicle(vehicleUI, points[0], points[1]);
-            
+
             currentEdge.getVehicleQueues().get(nextNode).add(this);
             nextNode.addVehicleQ(this);
 
@@ -82,9 +86,11 @@ public class Vehicle implements Runnable {
                 synchronized (this) {
 
                     try {
+                        speed = 0;
                         System.out.println("Node filled, Thread" + this.getThreadID() + " waiting");
                         long stopTimeStart = System.currentTimeMillis();
                         wait();
+                        speed = 10;
                         long stopTimeEnd = System.currentTimeMillis();
                         stopTime = stopTimeEnd - stopTimeStart; //calcular tiempo detenido
                         System.out.println("Node empty, Thread" + this.getThreadID() + " continues");
@@ -96,14 +102,16 @@ public class Vehicle implements Runnable {
             currentEdge.getVehicleQueues().get(nextNode).remove(this);
             nextNode.removeVehicleQ(this);
             
-            distanceTraveled += currentEdge.getDistance();
+
 
             try {
+                speed = 0;
                 simulatorController.drawVehicleInPos(vehicleUI, nextNode.getX(), nextNode.getY());
                 nextNode.setFilled(true);
                 System.out.println("Current node filled by thread " + this.getThreadID());
                 sleep(2000);
                 nextNode.setFilled(false);
+                speed = 10;
                 System.out.println("Thread " + this.getThreadID() + " leaves node");
                 if (!nextNode.getGeneralQ().isEmpty()) {
                     Vehicle firstInQ = nextNode.getGeneralQ().poll();
@@ -146,5 +154,8 @@ public class Vehicle implements Runnable {
     public long getTotalTime(){
         return this.totalTime;
     }
-    
+
+    public int getSpeed(){
+        return this.speed;
+    }
 }

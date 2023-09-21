@@ -116,17 +116,17 @@ public class SimulatorController {
     }
     
     public void averageSpeed(){
-        double totalDistance = 0;
-        long totalTime = 0;
+        int totalSpeed = 0;
         
-    vehicles = graph.getVehicles();
-        
-        for(Vehicle vehicle : vehicles){
-            totalDistance += vehicle.getDistanceTraveled();
-            totalTime += vehicle.getTotalTime();
+        vehicles = graph.getVehicles();
+        int vehiclesSize = vehicles.size();
+
+        for(int i = 0; i < vehiclesSize; i++){
+            totalSpeed += vehicles.get(i).getSpeed();
         }
-        if (totalTime > 0) {
-            averageSpeed = (totalDistance / (totalTime / 1000)); //km/s
+
+        if (totalSpeed > 0) {
+            averageSpeed = (totalSpeed / vehiclesSize); //km/s
         } else {
             averageSpeed = 0; 
         }
@@ -240,9 +240,11 @@ public class SimulatorController {
         for(Thread vehicleThread : vehiclesThreads){
             vehicleThread.interrupt();
         }
-        
-        for(Thread nodeThread : nodesThreads){
-            nodeThread.interrupt();
+
+        int nodesSize = nodes.size();
+        for(int i = 0; i < nodesSize; i++){
+            nodes.get(i).setFilled(false);
+            nodesThreads.get(i).interrupt();
         }
         
         if (time != null) {
@@ -255,6 +257,7 @@ public class SimulatorController {
         
         nodesThreads.clear();
         vehiclesThreads.clear();
+        panel.clearAllVehicles();
     }
 
     public void singleNodeVehicleSimulation(){
@@ -303,24 +306,30 @@ public class SimulatorController {
 
                 switch (mode) {
                     case 0 ->{
-                        panel.addNode(x, y);
-                        simulatorUI.repaint();
-                        float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
-                        if(panel.getNodesUISize() >= 2){
-                            buttonRadioEdges.setEnabled(true);
+                        NodeComponent existingNode = panel.isNodeSelected(x, y);
+                        System.out.println(existingNode);
+                        if (existingNode == null) {
+                            panel.addNode(x, y);
+                            simulatorUI.repaint();
+                            float alpha = Float.parseFloat(JOptionPane.showInputDialog("Enter an alpha value", "0.5"));
+                            if (panel.getNodesUISize() >= 2) {
+                                buttonRadioEdges.setEnabled(true);
+                            }
+                            graph.addNode(new Node(alpha, x, y));
                         }
-                        graph.addNode(new Node(alpha, x, y));
                     }
                     case 1 -> {
                         if (panel.getSelectedNodeUI() == null) {
                             // Si es la primera vez que se hace clic en modo 1, establece las coordenadas iniciales
                             nodeUI1 = panel.isNodeSelected(x, y);
                             if(nodeUI1 != null){
+                                nodeUI1.setColor(Color.BLUE);
                                 simulatorUI.repaint();
                             }
                         } else {
                             nodeUI2 = panel.isNodeSelected(x, y);
                             if(nodeUI2 != null && nodeUI2 != nodeUI1){
+                                nodeUI2.setColor(Color.BLUE);
                                 double angle = Math.atan2(nodeUI2.getY() - nodeUI1.getY(), nodeUI2.getX() - nodeUI1.getX());
 
                                 int x1 = (int) (nodeUI1.getX() + nodeUI1.getRadius() * Math.cos(angle));
@@ -331,7 +340,7 @@ public class SimulatorController {
                                 panel.addEdge(x1, y1, x2, y2);
                                 panel.setSelectedNodeUI(null);
                                 simulatorUI.repaint();
-                                int distance = Integer.parseInt(JOptionPane.showInputDialog("Enter a distance value", "4"));
+                                int distance = Integer.parseInt(JOptionPane.showInputDialog("Enter a distance value", "40"));
                                 Node node1 = graph.getNode(nodeUI1.getX(), nodeUI1.getY());
                                 Node node2 = graph.getNode(nodeUI2.getX(), nodeUI2.getY());
                                 if (node1 != null){

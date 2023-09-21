@@ -63,10 +63,12 @@ public class GraphPanel extends JPanel {
         this.selectedNodeUI = selectedNodeUI;
     }
 
+    public void clearAllVehicles(){
+        vehiclesUI.clear();
+    }
     public NodeComponent isNodeSelected(int x, int y){
         for(NodeComponent nodeUI : nodesUI){
             if(nodeUI.contains(x, y)){
-                nodeUI.setColor(Color.BLUE);
                 selectedNodeUI = nodeUI;
                 return this.selectedNodeUI;
             }
@@ -89,8 +91,8 @@ public class GraphPanel extends JPanel {
             edgeUI.paint(g);
         }
         
-        for(VehicleComponent vehicleUI : vehiclesUI){
-            vehicleUI.paint(g);
+        for(int i = 0; i < vehiclesUI.size(); i++){
+            vehiclesUI.get(i).paint(g);
         }
     }
 }
