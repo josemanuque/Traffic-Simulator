@@ -63,12 +63,14 @@ public class SimulatorController {
         this.labelTime = simulatorUI.getLabelTime();
         this.labelSpeed = simulatorUI.getLabelSpeed();
         this.graph = new Graph();
-        this.nodesThreads = new ArrayList<>(); 
+        this.nodesThreads = new ArrayList<>();
         this.vehiclesThreads = new ArrayList<>();
         mouseListener();
         radioButtonListener();
         buttonStartListener();
         buttonStopListener();
+        this.buttonStart.setEnabled(false);
+        this.buttonStop.setEnabled(false);
     }
 
     private void radioButtonListener(){
@@ -195,7 +197,6 @@ public class SimulatorController {
     }
 
     public void vehicleGenerator(Node startNode){
-        this.isRunning = true;
         while(isRunning){
             // 1 / alfa to get seconds per vehicle
             double beta = (1 /(startNode.getAlfa())) * 1000;
@@ -220,7 +221,9 @@ public class SimulatorController {
     public void startSimulation(){
         //graph.addSimulatorController(this); // Una vez se migre todo a controller se debe remover esto
         nodes = graph.getNodes();
-
+        this.isRunning = true;
+        this.buttonStart.setEnabled(false);
+        this.buttonStop.setEnabled(true);
         // For each node it will create a thread to start generating vehicles
         for(Node node : nodes){
             Thread t = new Thread(() -> {
@@ -258,6 +261,8 @@ public class SimulatorController {
         nodesThreads.clear();
         vehiclesThreads.clear();
         panel.clearAllVehicles();
+        this.buttonStart.setEnabled(true);
+        this.buttonStop.setEnabled(false);
     }
 
     public void singleNodeVehicleSimulation(){
@@ -301,6 +306,9 @@ public class SimulatorController {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if(isRunning){
+                    return;
+                }
                 x = e.getX();
                 y = e.getY();
 
@@ -348,6 +356,7 @@ public class SimulatorController {
                                 }
                                 nodeUI1 = null;
                                 nodeUI2 = null;
+                                buttonStart.setEnabled(true);
                             }
                             else{
                                 if (nodeUI1 != null){
