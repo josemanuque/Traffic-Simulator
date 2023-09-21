@@ -20,6 +20,10 @@ public class Graph {
     public ArrayList<Node> getNodes() {
         return nodes;
     }
+    
+    public ArrayList<Vehicle> getVehicles() {
+        return vehicles;
+    }
 
     public void addNode(Node node) {
         this.nodes.add(node);
@@ -28,7 +32,7 @@ public class Graph {
     public void addVehicle(Vehicle vehicle) {
         this.vehicles.add(vehicle);
     }
-
+    
     public void addSimulatorController(SimulatorController simulatorController){
         this.simulatorController = simulatorController;
     }

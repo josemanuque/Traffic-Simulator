@@ -21,6 +21,7 @@ import trafficsimulator.backend.Edge;
 import trafficsimulator.frontend.VehicleComponent;
 
 import static java.lang.Thread.sleep;
+import java.util.ArrayList;
 
 public class SimulatorController {
     private SimulatorWindow simulatorUI;
@@ -28,16 +29,28 @@ public class SimulatorController {
     private JRadioButton buttonRadioNodes;
     private JRadioButton buttonRadioEdges;
     private JButton buttonStart;
+    private JButton buttonStop;
+    private JLabel labelVehicleQuantity;
+    private JLabel labelTime;
+    private JLabel labelSpeed;
     private NodeComponent nodeUI1;
     private NodeComponent nodeUI2;
     private int mode = 0;
     private int x, y = 0;
+    private Thread time;
+    private long startTime;
+    private Thread updateSpeed;
+    private double averageSpeed;
 
     private Graph graph;
 
     private boolean isRunning = false;
 
     private List<Node> nodes;
+    private List<Vehicle> vehicles;
+    
+    private List<Thread> nodesThreads;
+    private List<Thread> vehiclesThreads;
 
     public SimulatorController(SimulatorWindow simulatorUI) {
         this.simulatorUI = simulatorUI;
@@ -45,10 +58,17 @@ public class SimulatorController {
         this.buttonRadioNodes = simulatorUI.getButtonRadioNodes();
         this.buttonRadioEdges = simulatorUI.getButtonRadioEdges();
         this.buttonStart = simulatorUI.getButtonStart();
+        this.buttonStop = simulatorUI.getButtonStop();
+        this.labelVehicleQuantity = simulatorUI.getLabelVehicleQuantity();
+        this.labelTime = simulatorUI.getLabelTime();
+        this.labelSpeed = simulatorUI.getLabelSpeed();
         this.graph = new Graph();
+        this.nodesThreads = new ArrayList<>(); 
+        this.vehiclesThreads = new ArrayList<>();
         mouseListener();
         radioButtonListener();
         buttonStartListener();
+        buttonStopListener();
     }
 
     private void radioButtonListener(){
@@ -79,10 +99,79 @@ public class SimulatorController {
             }
         });
     }
-
+    
+    private void buttonStopListener(){
+        buttonStop.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stopSimulation();
+                System.out.println("Se detuvo");
+            }
+        });
+    }
+    
+    public void updateActiveVehicle(){
+        int activeVehicles = Vehicle.getActiveVehicle();
+        labelVehicleQuantity.setText("Cantidad de vehículos: " + activeVehicles);
+    }
+    
+    public void averageSpeed(){
+        double totalDistance = 0;
+        long totalTime = 0;
+        
+    vehicles = graph.getVehicles();
+        
+        for(Vehicle vehicle : vehicles){
+            totalDistance += vehicle.getDistanceTraveled();
+            totalTime += vehicle.getTotalTime();
+        }
+        if (totalTime > 0) {
+            averageSpeed = (totalDistance / (totalTime / 1000)); //km/s
+        } else {
+            averageSpeed = 0; 
+        }
+    }
+    
+    public void updateSpeed(){
+        updateSpeed = new Thread(() ->{
+            while (isRunning){
+                try{
+                    Thread.sleep(5000);
+                    averageSpeed();
+                    labelSpeed.setText("Velocidad promedio: " + averageSpeed + "km/s");
+                } catch (InterruptedException ex) {
+                    // Maneja la interrupción del hilo aquí si es necesario
+                }
+            }
+        });
+        updateSpeed.start();
+    }
+    
     public Graph getGraph() {
         return graph;
     }
+    
+   private void simulationTime() {
+        time = new Thread(() -> {
+            startTime = System.currentTimeMillis();
+            while (isRunning) {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long hours = (elapsedTime / 3600000) % 24;
+                long minutes = (elapsedTime / 60000) % 60;
+                long seconds = (elapsedTime / 1000) % 60;
+
+                String timeFormat = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                labelTime.setText("Tiempo de simulación: " + timeFormat);
+
+                try {
+                    Thread.sleep(1000); 
+                } catch (InterruptedException e) {
+                    // Maneja la interrupción del hilo aquí si es necesario
+                }
+            }
+        });
+        time.start();
+   }
 
     public Vehicle createVehicle(Node startNode) {
         Object lock = new Object();
@@ -122,9 +211,12 @@ public class SimulatorController {
             if(vehicle != null){
                 Thread thread = new Thread(vehicle);
                 thread.start();
+                
+                vehiclesThreads.add(thread);
             }
         }
     }
+    
     public void startSimulation(){
         //graph.addSimulatorController(this); // Una vez se migre todo a controller se debe remover esto
         nodes = graph.getNodes();
@@ -135,7 +227,34 @@ public class SimulatorController {
                 vehicleGenerator(node);
             });
             t.start();
+            nodesThreads.add(t);
         }
+        simulationTime();
+        updateSpeed();
+    }
+    
+    public void stopSimulation(){
+        //detener thread de cada nodo, detener carros. Puedo hacer lista con threads de carros y hacerles interrumpt
+        this.isRunning = false;
+        
+        for(Thread vehicleThread : vehiclesThreads){
+            vehicleThread.interrupt();
+        }
+        
+        for(Thread nodeThread : nodesThreads){
+            nodeThread.interrupt();
+        }
+        
+        if (time != null) {
+            time.interrupt();
+        }
+        
+        if (updateSpeed != null) {
+            updateSpeed.interrupt();
+        }
+        
+        nodesThreads.clear();
+        vehiclesThreads.clear();
     }
 
     public void singleNodeVehicleSimulation(){
@@ -167,6 +286,7 @@ public class SimulatorController {
         panel.removeVehicleUI(vehicleUI);
         simulatorUI.repaint();
     }
+    
     public void drawVehicleInPos(VehicleComponent vehicleUI, int x, int y){
         vehicleUI.setPos(x, y);
         simulatorUI.repaint();
@@ -236,7 +356,5 @@ public class SimulatorController {
                 }
             }
         });
-    }
-
-    
+    } 
 }

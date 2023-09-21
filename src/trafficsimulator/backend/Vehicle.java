@@ -17,6 +17,8 @@ public class Vehicle implements Runnable {
     private VehicleComponent vehicleUI;
     private final Object lock;
     private static int activeVehicle = 0;
+    private double distanceTraveled;
+    private long totalTime;
 
     public Vehicle(SimulatorController simulatorController, Node start, Node finish, Object lock) {
         this.graph = simulatorController.getGraph();
@@ -24,13 +26,20 @@ public class Vehicle implements Runnable {
         this.start = start;
         this.finish = finish;
         this.lock = lock;
+        this.distanceTraveled = 0;
+        this.totalTime = 0;
         synchronized(Vehicle.class){
             activeVehicle++;
+            simulatorController.updateActiveVehicle();
         }
     }
 
     public long getThreadID(){
         return Thread.currentThread().getId();
+    }
+    
+    public Thread getThread(){
+        return Thread.currentThread();
     }
 
     // Encuentra la arista que conecta currentNode y el siguiente nodo en la ruta
@@ -51,6 +60,9 @@ public class Vehicle implements Runnable {
 
         vehicleUI = simulatorController.getNewVehicleUI();
         simulatorController.drawVehicleInPos(vehicleUI, this.start.getX(), this.start.getY());
+        
+        long startTime = System.currentTimeMillis();
+        long stopTime = 0;
 
         for (int i = 0; i < route.size(); i++) {
             Node currentNode = route.get(i);
@@ -62,7 +74,7 @@ public class Vehicle implements Runnable {
 
             Point[] points = currentEdge.getPointsByProximity(new Point(currentNode.getX(), currentNode.getY()));
             simulatorController.moveVehicle(vehicleUI, points[0], points[1]);
-
+            
             currentEdge.getVehicleQueues().get(nextNode).add(this);
             nextNode.addVehicleQ(this);
 
@@ -71,7 +83,10 @@ public class Vehicle implements Runnable {
 
                     try {
                         System.out.println("Node filled, Thread" + this.getThreadID() + " waiting");
+                        long stopTimeStart = System.currentTimeMillis();
                         wait();
+                        long stopTimeEnd = System.currentTimeMillis();
+                        stopTime = stopTimeEnd - stopTimeStart; //calcular tiempo detenido
                         System.out.println("Node empty, Thread" + this.getThreadID() + " continues");
                     } catch (InterruptedException e) {
                         // Manejo de la excepción, si es necesario
@@ -80,6 +95,8 @@ public class Vehicle implements Runnable {
             }
             currentEdge.getVehicleQueues().get(nextNode).remove(this);
             nextNode.removeVehicleQ(this);
+            
+            distanceTraveled += currentEdge.getDistance();
 
             try {
                 simulatorController.drawVehicleInPos(vehicleUI, nextNode.getX(), nextNode.getY());
@@ -103,11 +120,16 @@ public class Vehicle implements Runnable {
             } catch (InterruptedException e) {
                 // Manejo de la excepción, si es necesario
             }
+            long endTime = System.currentTimeMillis(); 
+            long elapsedTime = (endTime - startTime) - (stopTime + 2000); // Calcular tiempo en movimiento
+            totalTime += elapsedTime;
+            startTime = endTime;
         }
         simulatorController.deleteVehicleUI(vehicleUI);
         System.out.println("Thread " + this.getThreadID() + " arrived and will disappear");
         synchronized(Vehicle.class){
             activeVehicle--;
+            simulatorController.updateActiveVehicle();
         }
 
     }
@@ -115,4 +137,14 @@ public class Vehicle implements Runnable {
     public static int getActiveVehicle(){
         return activeVehicle;
     }
+   
+    
+    public double getDistanceTraveled(){
+        return this.distanceTraveled;
+    }
+    
+    public long getTotalTime(){
+        return this.totalTime;
+    }
+    
 }

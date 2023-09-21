@@ -5,8 +5,7 @@
         <group>
             <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Graph.java</file>
             <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Vehicle.java</file>
-            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/TrafficSimulator.java</file>
-            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Node.java</file>
+            <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/controllers/SimulatorController.java</file>
             <file>file:/C:/Users/julei/Documents/GitHub/TrafficSimulator/src/trafficsimulator/backend/Edge.java</file>
         </group>
     </open-files>
