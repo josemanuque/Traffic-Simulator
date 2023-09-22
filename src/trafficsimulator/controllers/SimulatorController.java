@@ -237,7 +237,6 @@ public class SimulatorController {
     }
     
     public void stopSimulation(){
-        //detener thread de cada nodo, detener carros. Puedo hacer lista con threads de carros y hacerles interrumpt
         this.isRunning = false;
         
         for(Thread vehicleThread : vehiclesThreads){

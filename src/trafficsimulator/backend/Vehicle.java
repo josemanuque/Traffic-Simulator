@@ -31,8 +31,8 @@ public class Vehicle implements Runnable {
         this.totalTime = 0;
         synchronized(Vehicle.class){
             activeVehicle++;
-            simulatorController.updateActiveVehicle();
         }
+        simulatorController.updateActiveVehicle();
     }
 
     public long getThreadID(){
@@ -137,9 +137,8 @@ public class Vehicle implements Runnable {
         System.out.println("Thread " + this.getThreadID() + " arrived and will disappear");
         synchronized(Vehicle.class){
             activeVehicle--;
-            simulatorController.updateActiveVehicle();
         }
-
+        simulatorController.updateActiveVehicle();
     }
     
     public static int getActiveVehicle(){
